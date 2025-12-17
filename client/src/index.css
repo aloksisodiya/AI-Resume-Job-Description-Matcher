@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+@theme {
+  --color-dark-blue: #0f172a;
+  --color-dark-blue-light: #1e293b;
+  --color-dark-blue-lighter: #334155;
+  --color-dark-blue-border: #475569;
+}
+
+@layer base {
+  body {
+    background-color: #0f172a;
+  }
+}
+
+@layer utilities {
+  .bg-dark-blue {
+    background-color: #0f172a;
+  }
+
+  .bg-dark-blue-light {
+    background-color: #1e293b;
+  }
+
+  .bg-dark-blue-lighter {
+    background-color: #334155;
+  }
+
+  .border-dark-blue {
+    border-color: #475569;
+  }
+}
