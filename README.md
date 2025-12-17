@@ -274,7 +274,7 @@ npm test
 1. Deploy to Railway, Render, or Heroku
 2. Set environment variables
 3. Connect to MongoDB Atlas
-4. Configure CORS for production domain
+4. Configure CORS for the production domain
 
 ### Frontend (React + Vite)
 
@@ -289,7 +289,7 @@ npm test
 ## 🐛 Known Issues
 
 - AI suggestions depend on OpenAI API quota availability
-- Large files (near 2MB) may take longer to process
+- Large files (nearly 2MB) may take longer to process
 - Email OTP requires proper SMTP configuration
 
 ## 🗺️ Future Enhancements
@@ -319,7 +319,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 👥 Authors
 
-- Your Name - Initial work
+- Alok Sisodiya - Initial work
 
 ## 🙏 Acknowledgments
 
@@ -330,8 +330,9 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 📧 Contact
 
-For questions or support, please contact: your.email@example.com
+For questions or support, please contact: aloksisodiya30@gmail.com
 
 ---
 
-Made with ❤️ by [Your Name]
+Made with ❤️ by Alok Sisodiya
+
