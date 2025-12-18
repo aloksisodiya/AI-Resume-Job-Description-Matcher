@@ -2,12 +2,32 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import session from "express-session";
 import connectDB from "./config/mongodb.js";
 import router from "./routes/routes.js";
+import passport from "./config/passport.js";
 
 dotenv.config();
 
 const app = express();
+
+// Session configuration (required for Passport)
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "your-session-secret-key",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    },
+  })
+);
+
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(
   cors({
     origin: process.env.CLIENT_URL,

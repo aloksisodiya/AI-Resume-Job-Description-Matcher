@@ -54,6 +54,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     isAuthenticated,
     updateUser,
+    setUser, // Expose setUser for OAuth callback
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

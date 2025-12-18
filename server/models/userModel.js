@@ -17,9 +17,17 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
+      required: function () {
+        // Password is only required if not using Google OAuth
+        return !this.googleId;
+      },
       minlength: [6, "Password must be at least 6 characters"],
       select: false,
+    },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true, // Allows null values to be non-unique
     },
     professionalTitle: {
       type: String,
