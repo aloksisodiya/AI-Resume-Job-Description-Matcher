@@ -15,7 +15,7 @@ const Footer = () => {
                 <div className="bg-blue-500 rounded-sm"></div>
               </div>
               <span className="text-white text-xl sm:text-2xl font-bold">
-                ResumeAI
+                ResumeSync
               </span>
             </div>
             <p className="text-gray-400 text-sm sm:text-base leading-relaxed max-w-md mx-auto">
@@ -28,7 +28,7 @@ const Footer = () => {
         {/* Copyright */}
         <div className="text-center pt-6 sm:pt-8 border-t border-dark-blue">
           <p className="text-gray-400 text-sm sm:text-base">
-            © 2025 ResumeAI. All rights reserved.
+            © 2025 ResumeSync. All rights reserved.
           </p>
         </div>
       </div>

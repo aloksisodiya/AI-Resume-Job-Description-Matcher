@@ -129,7 +129,7 @@ const ResetPasswordPage = () => {
               <div className="bg-blue-500 rounded-sm"></div>
             </div>
             <span className="text-white text-xl sm:text-2xl font-bold">
-              ResumeAI Matcher
+              ResumeSync
             </span>
           </Link>
           <Link
@@ -579,7 +579,7 @@ const ResetPasswordPage = () => {
       <footer className="w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
         <div className="max-w-7xl mx-auto text-center">
           <p className="text-gray-400 text-xs sm:text-sm">
-            © 2024 ResumeAI Inc. Secure System.
+            © 2024 ResumeSync Inc. Secure System.
           </p>
         </div>
       </footer>

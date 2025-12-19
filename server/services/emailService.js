@@ -26,7 +26,7 @@ class EmailService {
   async sendPasswordResetOTP(to, otp, firstName) {
     const mailOptions = {
       from: {
-        name: "ResumeAI Matcher",
+        name: "ResumeSync",
         address: process.env.EMAIL_USER,
       },
       to: to,
@@ -105,12 +105,12 @@ class EmailService {
       </head>
       <body>
         <div class="header">
-          <h1>🎯 ResumeAI Matcher</h1>
+          <h1>🎯 ResumeSync</h1>
           <h2>Password Reset OTP</h2>
         </div>
         <div class="content">
           <h3>Hello ${firstName}!</h3>
-          <p>We received a request to reset your ResumeAI Matcher account password. Use the OTP code below to proceed with resetting your password:</p>
+          <p>We received a request to reset your ResumeSync account password. Use the OTP code below to proceed with resetting your password:</p>
           
           <div class="otp-code">${otp}</div>
           
@@ -128,13 +128,13 @@ class EmailService {
           
           <p>If you didn't request a password reset, please ignore this email and your account will remain secure. We recommend changing your password if you continue to receive these emails.</p>
           
-          <p>Thank you for using ResumeAI Matcher to optimize your career journey!</p>
+          <p>Thank you for using ResumeSync to optimize your career journey!</p>
           
-          <p><strong>The ResumeAI Team</strong></p>
+          <p><strong>The ResumeSync Team</strong></p>
         </div>
         <div class="footer">
           <p>This is an automated email. Please do not reply to this message.</p>
-          <p>&copy; 2025 ResumeAI Matcher - AI-Powered Resume & Job Description Matching. All rights reserved.</p>
+          <p>&copy; 2025 ResumeSync - AI-Powered Resume & Job Description Matching. All rights reserved.</p>
         </div>
       </body>
       </html>

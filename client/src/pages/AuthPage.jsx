@@ -91,7 +91,7 @@ const AuthPage = () => {
               <div className="bg-blue-500 rounded-sm"></div>
             </div>
             <span className="text-white text-xl sm:text-2xl font-bold">
-              ResumeAI
+              ResumeSync
             </span>
           </Link>
           <Link
