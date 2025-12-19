@@ -28,29 +28,16 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// CORS configuration
-const corsOptions = {
-  origin: function (origin, callback) {
-    const allowedOrigins = process.env.CLIENT_URL
-      ? process.env.CLIENT_URL.split(",")
-      : ["http://localhost:5173"];
+// CORS configuration - Allow frontend origin
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
-    // Allow requests with no origin (mobile apps, postman, etc)
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.log("Origin not allowed by CORS:", origin);
-      callback(null, true); // Allow anyway but log it
-    }
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
-};
-
-app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
