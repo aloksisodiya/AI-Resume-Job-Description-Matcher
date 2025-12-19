@@ -3,7 +3,8 @@ import path from 'path';
 import fs from 'fs';
 
 // Ensure uploads directory exists
-const uploadDir = 'uploads/';
+// Use /tmp in production (Vercel) since the file system is read-only
+const uploadDir = process.env.NODE_ENV === 'production' ? '/tmp/uploads/' : 'uploads/';
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
