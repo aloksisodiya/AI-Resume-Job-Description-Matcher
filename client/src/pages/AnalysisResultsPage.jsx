@@ -1,10 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { generateAnalysisPDF } from "../utils/pdfGenerator";
 
 const AnalysisResultsPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [analysisData, setAnalysisData] = useState(null);
+
+  const handleDownloadReport = () => {
+    try {
+      if (analysisData) {
+        console.log("Generating PDF with data:", analysisData);
+        generateAnalysisPDF(analysisData);
+      } else {
+        console.error("No analysis data available");
+      }
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      alert("Failed to generate PDF. Check console for details.");
+    }
+  };
 
   useEffect(() => {
     // Get analysis results from navigation state
@@ -79,15 +94,6 @@ const AnalysisResultsPage = () => {
               Dashboard
             </Link>
             <Link
-              to="#"
-              className="text-gray-400 hover:text-white transition-colors"
-            >
-              Job Search
-            </Link>
-            <Link to="#" className="text-blue-400 font-medium">
-              Resume Builder
-            </Link>
-            <Link
               to="/profile"
               className="text-gray-400 hover:text-white transition-colors"
             >
@@ -143,25 +149,9 @@ const AnalysisResultsPage = () => {
           </div>
           <div className="flex gap-3 mt-4 sm:mt-0">
             <button
-              onClick={() => navigate("/")}
-              className="px-6 py-3 bg-dark-blue-light border border-dark-blue rounded-md text-white hover:border-blue-500 transition-colors flex items-center gap-2"
+              onClick={handleDownloadReport}
+              className="px-6 py-3 bg-blue-500 text-white rounded-md font-semibold hover:bg-blue-600 transition-colors flex items-center gap-2"
             >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                />
-              </svg>
-              Edit Resume
-            </button>
-            <button className="px-6 py-3 bg-blue-500 text-white rounded-md font-semibold hover:bg-blue-600 transition-colors flex items-center gap-2">
               <svg
                 className="w-5 h-5"
                 fill="none"

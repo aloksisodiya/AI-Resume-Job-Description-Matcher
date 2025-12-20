@@ -20,6 +20,8 @@
     "express": "^5.2.1",
     "express-session": "^1.18.2",
     "jsonwebtoken": "^9.0.3",
+    "jspdf": "^3.0.4",
+    "jspdf-autotable": "^5.0.2",
     "mammoth": "^1.11.0",
     "mongoose": "^9.0.1",
     "multer": "^2.0.2",
