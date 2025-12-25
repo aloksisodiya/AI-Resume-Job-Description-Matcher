@@ -1,25 +1,27 @@
-# AI-Powered Resume and Job Description Matcher 🚀
+# AI-Powered ATS Resume Matcher 🚀
 
-An intelligent web application that uses AI to analyze and match resumes with job descriptions, providing detailed insights and recommendations to help job seekers optimize their applications.
+An intelligent web application that simulates **real ATS (Applicant Tracking Systems)** using keyword matching, with **AI-powered suggestions via Ollama** to help job seekers optimize their resumes for better ATS scores.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)
 ![React](https://img.shields.io/badge/react-19.2.0-61dafb.svg)
+![Ollama](https://img.shields.io/badge/AI-Ollama-green.svg)
 
 ## 🌟 Features
 
 ### Core Functionality
 
+- **ATS-Style Keyword Matching**: Simulates real Applicant Tracking Systems used by companies
 - **Smart Resume Analysis**: Upload resumes in PDF, DOCX, or TXT format (max 2MB)
 - **Job Description Matching**: Compare resumes against job descriptions via file upload or text input
-- **AI-Powered Insights**: Get intelligent suggestions powered by OpenAI GPT-4o-mini
-- **Match Percentage**: See how well your resume matches the job requirements
-- **Detailed Breakdown**: View matched skills, missing skills, and keyword analysis
-- **Weighted Scoring Algorithm**:
-  - 40% Keywords matching
-  - 40% Technical skills
-  - 10% Experience level
-  - 10% Education match
+- **AI-Powered Keyword Suggestions**: Get intelligent suggestions powered by **Ollama (Local AI)**
+- **Match Percentage**: See how well your resume matches based on keyword analysis
+- **Detailed Breakdown**: View matched keywords, missing keywords, and skills analysis
+- **Real ATS Scoring Algorithm**:
+  - 50% Keyword matching (primary factor like real ATS)
+  - 35% Technical skills matching
+  - 10% Experience keywords
+  - 5% Education keywords
 
 ### User Features
 
@@ -31,8 +33,10 @@ An intelligent web application that uses AI to analyze and match resumes with jo
 
 ### Technical Highlights
 
-- **Real-time Analysis**: Instant feedback on resume-job description compatibility
-- **Fallback Mechanism**: Rule-based suggestions when AI quota is exceeded
+- **Real-time ATS Analysis**: Instant keyword-based feedback like actual ATS systems
+- **Local AI with Ollama**: Privacy-focused, no external API costs
+- **Fast Processing**: Optimized for sub-2 second analysis
+- **Fallback Mechanism**: Instant keyword-based suggestions when Ollama is unavailable
 - **File Validation**: Client and server-side file size and type validation
 - **Secure File Handling**: Automatic cleanup of uploaded files after processing
 - **Modern UI/UX**: Clean, dark-themed interface with smooth animations
@@ -55,7 +59,7 @@ An intelligent web application that uses AI to analyze and match resumes with jo
 - **MongoDB + Mongoose 9.0.1** - NoSQL database
 - **JWT** - Secure authentication
 - **Multer 2.0.2** - File upload handling
-- **OpenAI API** - AI-powered suggestions
+- **Ollama (llama3.2)** - Local AI for keyword suggestions
 - **Nodemailer 7.0.11** - Email service for OTP
 
 ### File Processing
@@ -67,7 +71,7 @@ An intelligent web application that uses AI to analyze and match resumes with jo
 
 - Node.js (v18.0.0 or higher)
 - MongoDB (local or Atlas)
-- OpenAI API Key
+- **Ollama** (for AI suggestions) - [Install here](https://ollama.ai)
 - Email service credentials (for password reset)
 
 ## 🚀 Getting Started
@@ -92,14 +96,41 @@ Create a `.env` file in the `server` directory:
 PORT=3000
 MONGODB_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret_key
-OPENAI_API_KEY=your_openai_api_key
+
+# Ollama Configuration (Local AI)
+OLLAMA_API_URL=http://127.0.0.1:11434
+OLLAMA_MODEL=llama3.2
 
 # Email Configuration (for password reset)
 EMAIL_USER=your_email@gmail.com
 EMAIL_PASS=your_app_password
 ```
 
-Start the backend server:
+### 4. Install and Start Ollama
+
+**Install Ollama:**
+
+```bash
+# Download from https://ollama.ai or use:
+# Windows/Mac: Download installer
+# Linux: curl -fsSL https://ollama.com/install.sh | sh
+```
+
+**Pull the AI model:**
+
+```bash
+ollama pull llama3.2
+```
+
+**Start Ollama server:**
+
+```bash
+ollama serve
+```
+
+> Ollama will run on `http://127.0.0.1:11434`
+
+### 5. Start the Backend
 
 ```bash
 npm run dev
@@ -107,7 +138,7 @@ npm run dev
 
 Server will run on `http://localhost:3000`
 
-### 3. Frontend Setup
+### 6. Frontend Setup
 
 ```bash
 cd client
@@ -168,9 +199,10 @@ AI-powered resume and Jd matcher/
 │   │   └── Resume.model.js
 │   ├── routes/                  # API routes
 │   │   ├── auth.routes.js
+│   │   ├── analysis.routes.js
 │   │   └── routes.js
 │   ├── services/                # Business logic
-│   │   ├── openaiService.js
+│   │   ├── llamaService.js      # Ollama AI integration
 │   │   └── emailService.js
 │   ├── uploads/                 # Temporary file storage (auto-cleaned)
 │   ├── app.js                   # Express app setup
@@ -192,7 +224,9 @@ AI-powered resume and Jd matcher/
 
 ### Analysis
 
-- `POST /api/analyze` - Analyze resume against job description (protected)
+- `POST /api/analysis/analyze` - Analyze resume against job description (ATS keyword matching)
+- `GET /api/analysis/history` - Get user's analysis history (protected)
+- `GET /api/analysis/:id` - Get specific analysis by ID (protected)
 
 ## 💡 Usage
 
@@ -216,9 +250,10 @@ AI-powered resume and Jd matcher/
 ### 4. Analyze
 
 - Click "Start Analysis"
-- View your match percentage
-- Review matched and missing skills
-- Read AI-powered suggestions for improvement
+- View your **ATS match percentage** (keyword-based like real ATS)
+- Review matched and missing **keywords**
+- Read **AI-powered keyword suggestions** from Ollama
+- See which exact keywords to add and where
 
 ### 5. Update Profile
 
@@ -248,12 +283,23 @@ AI-powered resume and Jd matcher/
 
 ## 🤖 AI Integration
 
-The application uses OpenAI's GPT-4o-mini model to provide intelligent suggestions:
+The application uses **Ollama with llama3.2** for AI-powered keyword suggestions:
 
-- **Analysis Context**: Sends match percentage, skills data, and resume/JD snippets
-- **JSON Response Format**: Structured output for consistency
-- **Fallback Logic**: Rule-based suggestions when API quota is exceeded
-- **Error Handling**: Graceful degradation on API failures
+- **Local Processing**: No external API costs, complete privacy
+- **Keyword Analysis**: Identifies missing keywords and suggests where to add them
+- **Fast Response**: Optimized for ~1 second response time
+- **ATS-Focused Prompts**: Trained to think like real ATS systems
+- **Fallback Logic**: Instant keyword-based suggestions when Ollama is unavailable
+- **Error Handling**: Graceful degradation on service failures
+
+### How it Works:
+
+1. Extracts keywords from job description
+2. Matches them against resume (exact matching like ATS)
+3. Calculates ATS score (50% keyword weight)
+4. Sends missing keywords to Ollama
+5. Ollama suggests specific placement strategies
+6. Returns actionable, keyword-focused recommendations
 
 ## 🧪 Testing
 
@@ -269,12 +315,13 @@ npm test
 
 ## 🚢 Deployment
 
-### Backend (Node.js + MongoDB)
+### Backend (Node.js + MongoDB + Ollama)
 
 1. Deploy to Railway, Render, or Heroku
-2. Set environment variables
+2. Set environment variables (including OLLAMA_API_URL)
 3. Connect to MongoDB Atlas
 4. Configure CORS for the production domain
+5. **Important**: Ensure Ollama is accessible or use fallback mode
 
 ### Frontend (React + Vite)
 
@@ -288,13 +335,15 @@ npm test
 
 ## 🐛 Known Issues
 
-- AI suggestions depend on OpenAI API quota availability
+- AI suggestions require Ollama to be running (falls back to keyword suggestions if not)
 - Large files (nearly 2MB) may take longer to process
 - Email OTP requires proper SMTP configuration
+- Ollama needs ~4GB RAM for llama3.2 model
 
 ## 🗺️ Future Enhancements
 
-- [ ] ATS (Applicant Tracking System) score
+- [x] ATS (Applicant Tracking System) keyword matching
+- [x] Local AI with Ollama for privacy
 - [ ] Resume template suggestions
 - [ ] Job search integration
 - [ ] Resume version history
@@ -302,6 +351,8 @@ npm test
 - [ ] Batch resume analysis
 - [ ] Chrome extension for LinkedIn
 - [ ] Mobile app (React Native)
+- [ ] Industry-specific keyword databases
+- [ ] ATS format checker (parsing issues detection)
 
 ## 🤝 Contributing
 
@@ -323,10 +374,16 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 🙏 Acknowledgments
 
-- OpenAI for the GPT API
+- Ollama team for local AI capabilities
 - React and Vite communities
 - Tailwind CSS team
 - All open-source contributors
+
+## 📚 Documentation
+
+- [ATS_KEYWORD_MATCHING_UPDATE.md](ATS_KEYWORD_MATCHING_UPDATE.md) - System architecture details
+- [OPTIMIZATION_SUMMARY.md](OPTIMIZATION_SUMMARY.md) - Performance optimizations
+- [TESTING_GUIDE.md](TESTING_GUIDE.md) - Testing scenarios and examples
 
 ## 📧 Contact
 
@@ -335,4 +392,3 @@ For questions or support, please contact: aloksisodiya30@gmail.com
 ---
 
 Made with ❤️ by Alok Sisodiya
-
