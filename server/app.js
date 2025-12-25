@@ -6,6 +6,7 @@ import session from "express-session";
 import connectDB from "./config/mongodb.js";
 import router from "./routes/routes.js";
 import passport from "./config/passport.js";
+import { checkOllamaStatus } from "./services/llamaService.js";
 
 dotenv.config();
 
@@ -51,6 +52,19 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT;
 
-app.listen(PORT, () => {
-  console.log(`Server is started on port ${PORT}`);
+app.listen(PORT, async () => {
+  console.log(`✓ Server is started on port ${PORT}`);
+
+  // Check Ollama status on startup
+  console.log(" Checking Ollama/LLaMA status...");
+  const ollamaRunning = await checkOllamaStatus();
+
+  if (ollamaRunning) {
+    console.log("Ollama is running and ready");
+  } else {
+    console.log(
+      "  Ollama is not running. AI suggestions will use fallback mode."
+    );
+    console.log("   To enable LLaMA: Install Ollama and run 'ollama serve'");
+  }
 });
