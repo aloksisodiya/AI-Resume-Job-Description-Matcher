@@ -1,9 +1,5 @@
 import express from "express";
-import {
-  analyzeResume,
-  getAnalysisHistory,
-  getAnalysisById,
-} from "../controllers/analysis.controller.js";
+import { analyzeResume } from "../controllers/analysis.controller.js";
 import { authenticateToken } from "../middleware/auth.js";
 import upload from "../middleware/upload.js";
 
@@ -20,11 +16,5 @@ router.post(
   ]),
   analyzeResume
 );
-
-// Get analysis history for user
-router.get("/history", authenticateToken, getAnalysisHistory);
-
-// Get specific analysis by ID
-router.get("/:id", authenticateToken, getAnalysisById);
 
 export default router;

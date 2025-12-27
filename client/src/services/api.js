@@ -184,43 +184,6 @@ export const analysisAPI = {
       };
     }
   },
-
-  /**
-   * Get analysis history for current user
-   */
-  getHistory: async () => {
-    try {
-      const response = await api.get("/analysis/history");
-      return { success: true, ...response.data };
-    } catch (error) {
-      return {
-        success: false,
-        message:
-          error.response?.data?.message ||
-          error.message ||
-          "Failed to fetch history",
-      };
-    }
-  },
-
-  /**
-   * Get specific analysis by ID
-   * @param {string} id - Analysis ID
-   */
-  getAnalysisById: async (id) => {
-    try {
-      const response = await api.get(`/analysis/${id}`);
-      return { success: true, ...response.data };
-    } catch (error) {
-      return {
-        success: false,
-        message:
-          error.response?.data?.message ||
-          error.message ||
-          "Failed to fetch analysis",
-      };
-    }
-  },
 };
 
 export default api;

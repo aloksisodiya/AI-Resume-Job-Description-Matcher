@@ -1,4 +1,3 @@
-import Analysis from "../models/Analysis.model.js";
 import fs from "fs/promises";
 import { extractText } from "unpdf";
 import mammoth from "mammoth";
@@ -135,33 +134,11 @@ export const analyzeResume = async (req, res) => {
       insights: aiResults.insights,
     };
 
-    // Optionally save analysis results (without full text) for history
-    let analysisId = null;
-    if (req.user && req.user.id) {
-      const analysis = await Analysis.create({
-        userId: req.user.id,
-        jobDescription: {
-          title: jobTitle || "Untitled Position",
-          company: company || "",
-        },
-        matchPercentage: finalResults.matchPercentage,
-        matchedKeywords: finalResults.matchedKeywords,
-        missingKeywords: finalResults.missingKeywords,
-        scores: finalResults.scores,
-        suggestions: finalResults.suggestions,
-        strengths: finalResults.strengths,
-        weaknesses: finalResults.weaknesses,
-        status: "COMPLETED",
-      });
-      analysisId = analysis._id;
-    }
-
     // Clean up uploaded files
     await cleanupFiles(filesToCleanup);
 
     return res.status(200).json({
       message: "Analysis completed successfully",
-      analysisId: analysisId,
       results: {
         matchPercentage: finalResults.matchPercentage,
         matchedKeywords: finalResults.matchedKeywords,
@@ -198,74 +175,6 @@ async function cleanupFiles(filePaths) {
     }
   }
 }
-
-/**
- * Get analysis history for a user
- */
-export const getAnalysisHistory = async (req, res) => {
-  try {
-    if (!req.user || !req.user.id) {
-      return res.status(401).json({ message: "Authentication required" });
-    }
-
-    const { resumeId } = req.query;
-
-    const filter = { userId: req.user.id };
-    if (resumeId) {
-      filter.resumeId = resumeId;
-    }
-
-    const analyses = await Analysis.find(filter)
-      .populate("resumeId", "fileMeta createdAt")
-      .sort({ createdAt: -1 })
-      .limit(50);
-
-    return res.status(200).json({
-      count: analyses.length,
-      analyses: analyses,
-    });
-  } catch (error) {
-    console.error("Get analysis history error:", error);
-    return res.status(500).json({
-      message: "Failed to fetch analysis history",
-      error: error.message,
-    });
-  }
-};
-
-/**
- * Get specific analysis by ID
- */
-export const getAnalysisById = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    if (!req.user || !req.user.id) {
-      return res.status(401).json({ message: "Authentication required" });
-    }
-
-    const analysis = await Analysis.findOne({
-      _id: id,
-      userId: req.user.id,
-    }).populate("resumeId", "fileMeta rawText");
-
-    if (!analysis) {
-      return res.status(404).json({
-        message: "Analysis not found or you don't have permission to access it",
-      });
-    }
-
-    return res.status(200).json({
-      analysis: analysis,
-    });
-  } catch (error) {
-    console.error("Get analysis error:", error);
-    return res.status(500).json({
-      message: "Failed to fetch analysis",
-      error: error.message,
-    });
-  }
-};
 
 /**
  * Core analysis logic - compares resume with job description
