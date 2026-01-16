@@ -1,8 +1,5 @@
 import fs from "fs/promises";
-import fsSync from "fs";
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-const pdfParse = require("pdf-parse");
+import { extractText } from "unpdf";
 import mammoth from "mammoth";
 import Resume from "../models/Resume.model.js";
 
@@ -19,13 +16,14 @@ export const uploadResume = async (req, res) => {
       return res.status(400).json({ message: "Resume file is required" });
     }
 
-    // 🔹 PDF parsing
+    // PDF parsing
     if (req.file.mimetype === "application/pdf") {
       const dataBuffer = await fs.readFile(req.file.path);
-      const data = await pdfParse(dataBuffer);
-      extractedText = data.text;
+      const uint8Array = new Uint8Array(dataBuffer);
+      const { text } = await extractText(uint8Array);
+      extractedText = String(text || "");
     }
-    // 🔹 DOC / DOCX parsing
+    // DOC / DOCX parsing
     else if (
       req.file.mimetype === "application/msword" ||
       req.file.mimetype ===
@@ -36,11 +34,11 @@ export const uploadResume = async (req, res) => {
       });
       extractedText = result.value;
     }
-    // 🔹 TXT parsing
+    // TXT parsing
     else if (req.file.mimetype === "text/plain") {
       extractedText = await fs.readFile(req.file.path, "utf-8");
     }
-    // 🔹 Unsupported file type
+    // Unsupported file type
     else {
       await fs.unlink(req.file.path);
       return res.status(400).json({
@@ -49,7 +47,7 @@ export const uploadResume = async (req, res) => {
       });
     }
 
-    // 🔹 Validate extracted text
+    // Validate extracted text
     if (!extractedText || extractedText.trim().length === 0) {
       await fs.unlink(req.file.path);
       return res.status(400).json({
@@ -58,7 +56,7 @@ export const uploadResume = async (req, res) => {
       });
     }
 
-    // 🔹 Check for duplicate resume (optional - prevent uploading same content)
+    // Check for duplicate resume (optional - prevent uploading same content)
     const existingResume = await Resume.findOne({
       userId: req.user.id,
       processingStatus: "PROCESSED",
@@ -105,7 +103,7 @@ export const uploadResume = async (req, res) => {
   } catch (error) {
     console.error("Resume processing error:", error);
 
-    // 🔥 CLEANUP IF ERROR OCCURS
+    // CLEANUP IF ERROR OCCURS
     if (req.file?.path) {
       try {
         await fs.unlink(req.file.path);
