@@ -6,7 +6,6 @@ import session from "express-session";
 import connectDB from "./config/mongodb.js";
 import router from "./routes/routes.js";
 import passport from "./config/passport.js";
-import { checkOllamaStatus } from "./services/llamaService.js";
 
 dotenv.config();
 
@@ -22,7 +21,7 @@ app.use(
       secure: process.env.NODE_ENV === "production",
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     },
-  })
+  }),
 );
 
 // Initialize Passport
@@ -36,7 +35,7 @@ app.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  }),
 );
 
 app.use(express.json());
@@ -52,19 +51,16 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT;
 
-app.listen(PORT, async () => {
+app.listen(PORT, () => {
   console.log(`✓ Server is started on port ${PORT}`);
 
-  // Check Ollama status on startup
-  console.log(" Checking Ollama/LLaMA status...");
-  const ollamaRunning = await checkOllamaStatus();
-
-  if (ollamaRunning) {
-    console.log("Ollama is running and ready");
+  // Check Groq AI status
+  if (process.env.GROQ_API_KEY) {
+    console.log("✓ Groq AI is configured and ready");
   } else {
     console.log(
-      "  Ollama is not running. AI suggestions will use fallback mode."
+      "⚠️  No Groq API key found. AI suggestions will use keyword-based fallback.",
     );
-    console.log("   To enable LLaMA: Install Ollama and run 'ollama serve'");
+    console.log("   Add GROQ_API_KEY to .env to enable AI-powered suggestions");
   }
 });

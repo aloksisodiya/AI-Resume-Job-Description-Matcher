@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import { extractText } from "unpdf";
 import mammoth from "mammoth";
-import { generateKeywordSuggestions } from "../services/llamaService.js";
+import { generateKeywordSuggestions } from "../services/aiService.js";
 
 /**
  * Extract text from uploaded file (resume or JD)
@@ -101,7 +101,7 @@ export const analyzeResume = async (req, res) => {
     const analysisResults = await performAnalysis(resumeText, jdText);
 
     console.log(
-      `⚡ Core analysis completed in ${Date.now() - analysisStartTime}ms`
+      `⚡ Core analysis completed in ${Date.now() - analysisStartTime}ms`,
     );
 
     // Generate keyword-based AI suggestions using Ollama (always enabled)
@@ -120,7 +120,7 @@ export const analyzeResume = async (req, res) => {
       console.log(
         `⚡ Ollama keyword suggestions completed in ${
           Date.now() - aiStartTime
-        }ms`
+        }ms`,
       );
     } catch (error) {
       console.error("Ollama error, using fallback:", error.message);
@@ -190,16 +190,16 @@ async function performAnalysis(resumeText, jobDescriptionText) {
   const resumeKeywords = extractKeywords(resumeLower);
 
   console.log(
-    `📊 ATS Analysis: ${jdKeywords.length} keywords in JD, ${resumeKeywords.length} in resume`
+    `📊 ATS Analysis: ${jdKeywords.length} keywords in JD, ${resumeKeywords.length} in resume`,
   );
 
   // ===== 1. KEYWORD MATCHING (Like Real ATS) =====
   const matchedKeywords = jdKeywords.filter((keyword) =>
-    resumeLower.includes(keyword)
+    resumeLower.includes(keyword),
   );
 
   const missingKeywords = jdKeywords.filter(
-    (keyword) => !resumeLower.includes(keyword)
+    (keyword) => !resumeLower.includes(keyword),
   );
 
   console.log(`✓ ATS Matched: ${matchedKeywords.length} keywords`);
@@ -281,13 +281,13 @@ async function performAnalysis(resumeText, jobDescriptionText) {
   // Simple keyword-based skill matching (like ATS)
   const jdSkills = commonSkills.filter((skill) => jdLower.includes(skill));
   const resumeSkills = commonSkills.filter((skill) =>
-    resumeLower.includes(skill)
+    resumeLower.includes(skill),
   );
   const matchedSkills = jdSkills.filter((skill) =>
-    resumeSkills.includes(skill)
+    resumeSkills.includes(skill),
   );
   const missingSkills = jdSkills.filter(
-    (skill) => !resumeSkills.includes(skill)
+    (skill) => !resumeSkills.includes(skill),
   );
 
   const skillsMatchScore =
@@ -312,7 +312,7 @@ async function performAnalysis(resumeText, jobDescriptionText) {
     "delivered",
   ];
   const hasExperience = experienceKeywords.some((keyword) =>
-    resumeLower.includes(keyword)
+    resumeLower.includes(keyword),
   );
   const experienceMatchScore = hasExperience ? 75 : 40;
 
@@ -328,7 +328,7 @@ async function performAnalysis(resumeText, jobDescriptionText) {
     "certification",
   ];
   const hasEducation = educationKeywords.some((keyword) =>
-    resumeLower.includes(keyword)
+    resumeLower.includes(keyword),
   );
   const educationMatchScore = hasEducation ? 80 : 50;
 
@@ -339,7 +339,7 @@ async function performAnalysis(resumeText, jobDescriptionText) {
     keywordMatchScore * 0.5 +
       skillsMatchScore * 0.35 +
       experienceMatchScore * 0.1 +
-      educationMatchScore * 0.05
+      educationMatchScore * 0.05,
   );
 
   console.log(`📊 ATS Score Breakdown:
@@ -355,7 +355,7 @@ async function performAnalysis(resumeText, jobDescriptionText) {
     suggestions.push(
       `Add these keywords to your resume: ${missingKeywords
         .slice(0, 5)
-        .join(", ")}`
+        .join(", ")}`,
     );
   }
 
@@ -363,13 +363,13 @@ async function performAnalysis(resumeText, jobDescriptionText) {
     suggestions.push(
       `Consider highlighting these skills if you have them: ${missingSkills
         .slice(0, 5)
-        .join(", ")}`
+        .join(", ")}`,
     );
   }
 
   if (matchPercentage < 50) {
     suggestions.push(
-      "Your resume needs significant improvements to match this job description"
+      "Your resume needs significant improvements to match this job description",
     );
   } else if (matchPercentage < 70) {
     suggestions.push("Tailor your resume more closely to the job requirements");
@@ -377,7 +377,7 @@ async function performAnalysis(resumeText, jobDescriptionText) {
 
   if (!hasExperience) {
     suggestions.push(
-      "Add more details about your work experience and achievements"
+      "Add more details about your work experience and achievements",
     );
   }
 
@@ -385,7 +385,7 @@ async function performAnalysis(resumeText, jobDescriptionText) {
   const strengths = [];
   if (matchedSkills.length > 3) {
     strengths.push(
-      `Strong technical skills match: ${matchedSkills.slice(0, 5).join(", ")}`
+      `Strong technical skills match: ${matchedSkills.slice(0, 5).join(", ")}`,
     );
   }
   if (matchPercentage > 70) {
@@ -399,7 +399,7 @@ async function performAnalysis(resumeText, jobDescriptionText) {
   const weaknesses = [];
   if (missingSkills.length > 5) {
     weaknesses.push(
-      `Missing key technical skills: ${missingSkills.slice(0, 5).join(", ")}`
+      `Missing key technical skills: ${missingSkills.slice(0, 5).join(", ")}`,
     );
   }
   if (matchPercentage < 50) {
@@ -413,12 +413,12 @@ async function performAnalysis(resumeText, jobDescriptionText) {
   // Remove any keywords that appear in both matched and missing
   const matchedSet = new Set(matchedKeywords.map((k) => k.toLowerCase()));
   const finalMissingKeywords = missingKeywords.filter(
-    (keyword) => !matchedSet.has(keyword.toLowerCase())
+    (keyword) => !matchedSet.has(keyword.toLowerCase()),
   );
 
   const matchedSkillsSet = new Set(matchedSkills.map((s) => s.toLowerCase()));
   const finalMissingSkills = missingSkills.filter(
-    (skill) => !matchedSkillsSet.has(skill.toLowerCase())
+    (skill) => !matchedSkillsSet.has(skill.toLowerCase()),
   );
 
   return {
@@ -528,7 +528,7 @@ function generateFallbackSuggestions(analysisResults) {
   // Suggestion 1: Missing keywords
   if (missingKeywords.length > 0) {
     suggestions.push(
-      `Add these keywords: ${missingKeywords.slice(0, 5).join(", ")}`
+      `Add these keywords: ${missingKeywords.slice(0, 5).join(", ")}`,
     );
   }
 
@@ -537,33 +537,33 @@ function generateFallbackSuggestions(analysisResults) {
     suggestions.push(
       `Highlight these skills if you have them: ${missingSkills
         .slice(0, 3)
-        .join(", ")}`
+        .join(", ")}`,
     );
   }
 
   // Suggestion 3: Based on match percentage
   if (matchPercentage < 50) {
     suggestions.push(
-      "Tailor your resume more closely to match the job requirements"
+      "Tailor your resume more closely to match the job requirements",
     );
   } else if (matchPercentage < 70) {
     suggestions.push(
-      "Strengthen your resume by incorporating more relevant keywords"
+      "Strengthen your resume by incorporating more relevant keywords",
     );
   } else {
     suggestions.push(
-      "Your resume is well-aligned. Consider quantifying achievements with metrics"
+      "Your resume is well-aligned. Consider quantifying achievements with metrics",
     );
   }
 
   // Suggestion 4: Action verbs
   suggestions.push(
-    "Use strong action verbs like 'developed', 'led', 'implemented', 'designed'"
+    "Use strong action verbs like 'developed', 'led', 'implemented', 'designed'",
   );
 
   // Suggestion 5: Metrics
   suggestions.push(
-    "Add specific metrics and numbers to demonstrate impact (e.g., '30% improvement')"
+    "Add specific metrics and numbers to demonstrate impact (e.g., '30% improvement')",
   );
 
   // Generate insights

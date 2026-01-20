@@ -81,6 +81,22 @@ const login = async (req, res) => {
       return res.json({ success: false, message: "Invalid email" });
     }
 
+    // Check if user signed up with Google OAuth
+    if (user.googleId && !user.password) {
+      return res.json({
+        success: false,
+        message: "This account uses Google sign-in. Please login with Google.",
+      });
+    }
+
+    // Check if password exists
+    if (!user.password) {
+      return res.json({
+        success: false,
+        message: "Password not set for this account",
+      });
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.json({
@@ -172,7 +188,7 @@ const sendResetPasswordOtp = async (req, res) => {
     const emailResult = await emailService.sendPasswordResetOTP(
       email,
       otp,
-      user.name
+      user.name,
     );
 
     if (!emailResult.success) {
@@ -319,7 +335,7 @@ const googleCallback = async (req, res) => {
 
     if (!user) {
       return res.redirect(
-        `${process.env.CLIENT_URL}/auth?error=Authentication failed`
+        `${process.env.CLIENT_URL}/auth?error=Authentication failed`,
       );
     }
 
@@ -346,15 +362,15 @@ const googleCallback = async (req, res) => {
         phone: user.phone || "",
         location: user.location || "",
         linkedinUrl: user.linkedinUrl || "",
-      })
+      }),
     );
 
     return res.redirect(
-      `${process.env.CLIENT_URL}/auth/google/success?token=${token}&user=${userData}`
+      `${process.env.CLIENT_URL}/auth/google/success?token=${token}&user=${userData}`,
     );
   } catch (error) {
     return res.redirect(
-      `${process.env.CLIENT_URL}/auth?error=${error.message}`
+      `${process.env.CLIENT_URL}/auth?error=${error.message}`,
     );
   }
 };
