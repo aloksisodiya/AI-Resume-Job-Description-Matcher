@@ -1,11 +1,11 @@
 # AI-Powered ATS Resume Matcher 🚀
 
-An intelligent web application that simulates **real ATS (Applicant Tracking Systems)** using keyword matching, with **AI-powered suggestions via Ollama** to help job seekers optimize their resumes for better ATS scores.
+An intelligent web application that simulates **real ATS (Applicant Tracking Systems)** using keyword matching, with **AI-powered suggestions via Groq** to help job seekers optimize their resumes for better ATS scores.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)
 ![React](https://img.shields.io/badge/react-19.2.0-61dafb.svg)
-![Ollama](https://img.shields.io/badge/AI-Ollama-green.svg)
+![Groq](https://img.shields.io/badge/AI-Groq-orange.svg)
 
 ## 🌟 Features
 
@@ -14,7 +14,7 @@ An intelligent web application that simulates **real ATS (Applicant Tracking Sys
 - **ATS-Style Keyword Matching**: Simulates real Applicant Tracking Systems used by companies
 - **Smart Resume Analysis**: Upload resumes in PDF, DOCX, or TXT format (max 2MB)
 - **Job Description Matching**: Compare resumes against job descriptions via file upload or text input
-- **AI-Powered Keyword Suggestions**: Get intelligent suggestions powered by **Ollama (Local AI)**
+- **AI-Powered Keyword Suggestions**: Get intelligent suggestions powered by **Groq AI (Llama 3.1)**
 - **Match Percentage**: See how well your resume matches based on keyword analysis
 - **Detailed Breakdown**: View matched keywords, missing keywords, and skills analysis
 - **Real ATS Scoring Algorithm**:
@@ -25,7 +25,7 @@ An intelligent web application that simulates **real ATS (Applicant Tracking Sys
 
 ### User Features
 
-- **Authentication System**: Secure signup/login with JWT tokens
+- **Authentication System**: Secure signup/login with JWT tokens and Google OAuth
 - **User Profile Management**: Update personal information, professional title, location, and LinkedIn URL
 - **Password Recovery**: Email-based OTP password reset
 - **Persistent Sessions**: Stay logged in across browser refreshes
@@ -34,9 +34,9 @@ An intelligent web application that simulates **real ATS (Applicant Tracking Sys
 ### Technical Highlights
 
 - **Real-time ATS Analysis**: Instant keyword-based feedback like actual ATS systems
-- **Local AI with Ollama**: Privacy-focused, no external API costs
+- **Cloud AI with Groq**: Fast, production-ready AI suggestions (free tier available)
 - **Fast Processing**: Optimized for sub-2 second analysis
-- **Fallback Mechanism**: Instant keyword-based suggestions when Ollama is unavailable
+- **Fallback Mechanism**: Instant keyword-based suggestions when AI is unavailable
 - **File Validation**: Client and server-side file size and type validation
 - **Secure File Handling**: Automatic cleanup of uploaded files after processing
 - **Modern UI/UX**: Clean, dark-themed interface with smooth animations
@@ -58,8 +58,9 @@ An intelligent web application that simulates **real ATS (Applicant Tracking Sys
 - **Express 5.2.1** - Web application framework
 - **MongoDB + Mongoose 9.0.1** - NoSQL database
 - **JWT** - Secure authentication
+- **Passport.js** - Google OAuth authentication
 - **Multer 2.0.2** - File upload handling
-- **Ollama (llama3.2)** - Local AI for keyword suggestions
+- **Groq SDK** - Cloud AI for keyword suggestions (Llama 3.1)
 - **Nodemailer 7.0.11** - Email service for OTP
 
 ### File Processing
@@ -71,8 +72,9 @@ An intelligent web application that simulates **real ATS (Applicant Tracking Sys
 
 - Node.js (v18.0.0 or higher)
 - MongoDB (local or Atlas)
-- **Ollama** (for AI suggestions) - [Install here](https://ollama.ai)
+- **Groq API Key** (free tier available) - [Get one here](https://console.groq.com)
 - Email service credentials (for password reset)
+- Google OAuth credentials (optional, for Google sign-in)
 
 ## 🚀 Getting Started
 
@@ -96,39 +98,32 @@ Create a `.env` file in the `server` directory:
 PORT=3000
 MONGODB_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret_key
+NODE_ENV=development
 
-# Ollama Configuration (Local AI)
-OLLAMA_API_URL=http://127.0.0.1:11434
-OLLAMA_MODEL=llama3.2
+# Groq AI Configuration (Cloud AI)
+GROQ_API_KEY=your_groq_api_key_here
 
 # Email Configuration (for password reset)
 EMAIL_USER=your_email@gmail.com
 EMAIL_PASS=your_app_password
+
+# Google OAuth (Optional)
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_CALLBACK_URL=http://localhost:3000/api/auth/google/callback
+SESSION_SECRET=your_session_secret
+
+# Client URL
+CLIENT_URL=http://localhost:5173
 ```
 
-### 4. Install and Start Ollama
+### 4. Get Your Groq API Key
 
-**Install Ollama:**
-
-```bash
-# Download from https://ollama.ai or use:
-# Windows/Mac: Download installer
-# Linux: curl -fsSL https://ollama.com/install.sh | sh
-```
-
-**Pull the AI model:**
-
-```bash
-ollama pull llama3.2
-```
-
-**Start Ollama server:**
-
-```bash
-ollama serve
-```
-
-> Ollama will run on `http://127.0.0.1:11434`
+1. Go to [https://console.groq.com](https://console.groq.com)
+2. Sign up/Login (free, no credit card required)
+3. Navigate to **API Keys** section
+4. Click **Create API Key**
+5. Copy the key and add it to your `.env` file
 
 ### 5. Start the Backend
 
@@ -202,7 +197,7 @@ AI-powered resume and Jd matcher/
 │   │   ├── analysis.routes.js
 │   │   └── routes.js
 │   ├── services/                # Business logic
-│   │   ├── llamaService.js      # Ollama AI integration
+│   │   ├── aiService.js         # Groq AI integration
 │   │   └── emailService.js
 │   ├── uploads/                 # Temporary file storage (auto-cleaned)
 │   ├── app.js                   # Express app setup
@@ -218,6 +213,8 @@ AI-powered resume and Jd matcher/
 - `POST /api/auth/register` - User registration
 - `POST /api/auth/login` - User login
 - `POST /api/auth/logout` - User logout
+- `GET /api/auth/google` - Google OAuth login
+- `GET /api/auth/google/callback` - Google OAuth callback
 - `POST /api/auth/send-pass-otp` - Send password reset OTP
 - `POST /api/auth/reset-password` - Reset password with OTP
 - `PUT /api/auth/update-profile` - Update user profile (protected)
@@ -283,13 +280,14 @@ AI-powered resume and Jd matcher/
 
 ## 🤖 AI Integration
 
-The application uses **Ollama with llama3.2** for AI-powered keyword suggestions:
+The application uses **Groq AI with Llama 3.1** for AI-powered keyword suggestions:
 
-- **Local Processing**: No external API costs, complete privacy
+- **Cloud-Based Processing**: Fast, production-ready, no local setup required
+- **Free Tier Available**: ~14,400 requests per day with no credit card required
 - **Keyword Analysis**: Identifies missing keywords and suggests where to add them
-- **Fast Response**: Optimized for ~1 second response time
+- **Ultra-Fast Response**: Optimized for sub-1 second response time
 - **ATS-Focused Prompts**: Trained to think like real ATS systems
-- **Fallback Logic**: Instant keyword-based suggestions when Ollama is unavailable
+- **Fallback Logic**: Instant keyword-based suggestions when API is unavailable
 - **Error Handling**: Graceful degradation on service failures
 
 ### How it Works:
@@ -297,8 +295,8 @@ The application uses **Ollama with llama3.2** for AI-powered keyword suggestions
 1. Extracts keywords from job description
 2. Matches them against resume (exact matching like ATS)
 3. Calculates ATS score (50% keyword weight)
-4. Sends missing keywords to Ollama
-5. Ollama suggests specific placement strategies
+4. Sends missing keywords to Groq AI
+5. Groq suggests specific placement strategies
 6. Returns actionable, keyword-focused recommendations
 
 ## 🧪 Testing
@@ -315,13 +313,13 @@ npm test
 
 ## 🚢 Deployment
 
-### Backend (Node.js + MongoDB + Ollama)
+### Backend (Node.js + MongoDB + Groq)
 
 1. Deploy to Railway, Render, or Heroku
-2. Set environment variables (including OLLAMA_API_URL)
+2. Set environment variables (including GROQ_API_KEY)
 3. Connect to MongoDB Atlas
 4. Configure CORS for the production domain
-5. **Important**: Ensure Ollama is accessible or use fallback mode
+5. **Note**: Groq API works seamlessly in production (cloud-based)
 
 ### Frontend (React + Vite)
 
@@ -335,15 +333,16 @@ npm test
 
 ## 🐛 Known Issues
 
-- AI suggestions require Ollama to be running (falls back to keyword suggestions if not)
+- AI suggestions require Groq API key (falls back to keyword suggestions if not configured)
 - Large files (nearly 2MB) may take longer to process
 - Email OTP requires proper SMTP configuration
-- Ollama needs ~4GB RAM for llama3.2 model
+- Google OAuth requires proper callback URL configuration in production
 
 ## 🗺️ Future Enhancements
 
 - [x] ATS (Applicant Tracking System) keyword matching
-- [x] Local AI with Ollama for privacy
+- [x] Cloud AI with Groq for production deployment
+- [x] Google OAuth integration
 - [ ] Resume template suggestions
 - [ ] Job search integration
 - [ ] Resume version history
@@ -353,6 +352,7 @@ npm test
 - [ ] Mobile app (React Native)
 - [ ] Industry-specific keyword databases
 - [ ] ATS format checker (parsing issues detection)
+- [ ] Multi-language support
 
 ## 🤝 Contributing
 
@@ -374,16 +374,11 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 🙏 Acknowledgments
 
-- Ollama team for local AI capabilities
+- Groq team for fast and reliable AI infrastructure
 - React and Vite communities
 - Tailwind CSS team
+- MongoDB team
 - All open-source contributors
-
-## 📚 Documentation
-
-- [ATS_KEYWORD_MATCHING_UPDATE.md](ATS_KEYWORD_MATCHING_UPDATE.md) - System architecture details
-- [OPTIMIZATION_SUMMARY.md](OPTIMIZATION_SUMMARY.md) - Performance optimizations
-- [TESTING_GUIDE.md](TESTING_GUIDE.md) - Testing scenarios and examples
 
 ## 📧 Contact
 
